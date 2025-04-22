@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Course List - Athens State University</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <script src="courselist.js"></script>
+
+    <style>
+        /* Base Styling */
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        /* Header Styling - Matching other pages */
+        .header {
+            padding: 10px; 
+            text-align: center;
+            background: #092a6d;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 5vw;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 3vw;
+            margin-top: 0;
+        }
+
+        /* Banner Styling - Similar to other pages */
+        .banner {
+            background: linear-gradient(135deg, #092a6d, #4c7baf);
+            color: white;
+            text-align: center;
+            padding: 3vw 2vw; 
+            font-size: 2.5vw; 
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5vw; 
+            margin-bottom: 2vw; 
+            box-shadow: 0 0.5vw 1vw rgba(0,0,0,0.2); 
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner::before {
+            content: "";
+            position: absolute;
+            top: -3vw; 
+            left: -3vw;
+            right: -3vw;
+            bottom: -3vw;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+            z-index: -1;
+            transform: rotate(-5deg);
+        }
+
+        /* Main content area */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Layout for the two columns */
+        .layout-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        /* Left Column: Course Selection */
+        .course-selection {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .course-selection:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Right Column: Semester Output */
+        #semester-container {
+            flex: 1;
+            min-width: 300px;
+            min-height: 200px;
+        }
+
+        .semester-section {
+            margin-bottom: 20px;
+            background: white;
+            border-left: 5px solid #092a6d;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .semester-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .semester-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #092a6d;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .semester-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background: #092a6d;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        tr:not(.unavailable):hover {
+            background-color: #e6f2ff;
+        }
+
+        .credits-cell {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Electives Dropdown */
+        .electives-dropdown {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .electives-btn {
+            background: linear-gradient(135deg, #092a6d, #4c7baf);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            width: 100%;
+            text-align: left;
+            position: relative;
+            transition: 0.3s;
+        }
+        
+        .electives-btn:hover {
+            background: linear-gradient(135deg, #4c7baf, #092a6d);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .electives-btn:after {
+            content: "";
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 6px 6px 0 6px;
+            border-style: solid;
+            border-color: white transparent transparent transparent;
+        }
+
+        .electives-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            width: 100%;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+            margin-top: 5px;
+            padding: 10px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .electives-content h3 {
+            color: #092a6d;
+            padding: 10px 16px;
+            margin: 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .elective-item {
+            padding: 10px 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .elective-item:last-child {
+            border-bottom: none;
+        }
+
+        .elective-title {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .elective-credits {
+            float: right;
+            background: #e6f2ff;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            color: #092a6d;
+            font-weight: bold;
+        }
+
+        .show-electives {
+            display: block;
+        }
+
+        .course-checkbox {
+            accent-color: #092a6d;
+            transform: scale(1.2);
+            margin-right: 6px;
+        }
+
+		.skip-btn {
+			background: linear-gradient(135deg, #092a6d, #4c7baf);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+            font-weight: bold;
+            transition: 0.3s;
+            width: 100%;
+		}
+
+		.skip-btn:hover {
+			background: linear-gradient(135deg, #4c7baf, #092a6d);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: translateY(-3px);
+		}
+		
+        .submit-btn {
+            background: linear-gradient(135deg, #092a6d, #4c7baf);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+            font-weight: bold;
+            transition: 0.3s;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #4c7baf, #092a6d);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: translateY(-3px);
+        }
+		
+		.print-btn {
+			background: linear-gradient(135deg, #092a6d, #4c7baf);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+            font-weight: bold;
+            transition: 0.3s;
+            width: 100%;
+		}
+
+		.print-btn:hover {
+			background: linear-gradient(135deg, #4c7baf, #092a6d);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: translateY(-3px);
+		}
+
+        .unavailable {
+            color: #999;
+            background-color: #f0f0f0;
+        }
+        
+        .unavailable input[type="checkbox"] {
+            cursor: not-allowed;
+        }
+        
+        .selected-course {
+            background-color: #c8f7c5 !important;
+        }
+        
+        .selected-course label {
+            color: #1e8f3d !important;
+            font-weight: bold;
+        }
+
+        /* Loading indicator styles */
+        .loading {
+            text-align: center;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #092a6d;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Footer Styling - Matching other pages */
+        .footer {
+            text-align: center;
+            padding: 2vw 0; 
+            background: linear-gradient(135deg, #ddd, #bbb);
+            margin-top: 3vw; 
+            font-size: 2vw;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .layout-row {
+                flex-direction: column;
+            }
+            
+            .course-selection, #semester-container {
+                min-width: 100%;
+            }
+            
+            .header h1 {
+                font-size: 6vw;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <h1 id="program-title">Course Planner</h1>
+    <p>Plan your academic journey at Athens State</p>
+    <img id="program-logo" src="ASU logo.png" style="width:100px;height:100px">
+</header>
+
+<div class="banner">SELECT YOUR COURSES</div>
+
+<div class="main-container">
+    <div class="loading" id="loading-indicator">
+        <div class="loading-spinner"></div>
+        <p>Loading course data...</p>
+    </div>
+
+    <div class="layout-row">
+        <!-- Left column: Course selection area -->
+        <div class="course-selection">
+            <h2 id="semester-prompt" style="font-size: 1.3em; color: #092a6d; text-align: center;"></h2>
+            
+            <!-- Electives dropdown -->
+            <div class="electives-dropdown">
+                <button type="button" class="electives-btn" onclick="toggleElectivesDropdown()">
+                    Available Electives
+                </button>
+                <div id="electivesDropdown" class="electives-content">
+                    <!-- Electives will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <form id="course-form">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Courses</th>
+                        <th>Credits</th>
+                    </tr>
+                    </thead>
+                    <tbody id="data-container"></tbody>
+                </table>
+                <button type="submit" class="submit-btn">SUBMIT COURSES</button>
+				<button type="button" id="skip-semester-btn" class="skip-btn">SKIP SEMESTER</button>
+				<button type="button" id="print-plan-btn" class="print-btn">PRINT COURSE PLAN</button>
+            </form>
+        </div>
+
+        <!-- Right column: Semester output -->
+        <div id="semester-container"></div>
+    </div>
+</div>
+
+<footer class="footer">
+    <p>&copy; 2025 Athens State University</p>
+</footer>
+
+<script>
+    // Show loading indicator when page loads
+    document.getElementById('loading-indicator').style.display = 'block';
+    
+    // Hide loading indicator when all content is loaded
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            document.getElementById('loading-indicator').style.display = 'none';
+        }, 500);
+    });
+    
+    // Get the major and semester from URL parameters
+    function getURLParameter(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+    }
+    
+    // Set the page title based on the major
+    document.addEventListener('DOMContentLoaded', function() {
+        const major = getURLParameter('major') || 'cs';
+        const titleElement = document.getElementById('program-title');
+        const logoElement = document.getElementById('program-logo');
+        
+        if (major === 'ite') {
+            titleElement.textContent = 'Information Technology Course Planner';
+            // If you have a specific ITE logo, you can set it here
+        } else {
+            titleElement.textContent = 'Computer Science Course Planner';
+        }
+    });
+    
+    function toggleElectivesDropdown() {
+        document.getElementById("electivesDropdown").classList.toggle("show-electives");
+    }
+    
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+        if (!event.target.matches('.electives-btn')) {
+            var dropdown = document.getElementById("electivesDropdown");
+            if (dropdown.classList.contains('show-electives')) {
+                dropdown.classList.remove('show-electives');
+            }
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+Instructions:
+
+Download xampp from https://www.apachefriends.org/
+
+In the xampp control panel, ensure the Apache and MySQL services are downloaded (click the checkmarks next to them).
+
+While in the control panel, open the config file of MySQL (my.ini). Set port to 3307 (default is 3306)
+
+Find the config.inc.php file in xampp > phpMyAdmin. You'll find the following line early in the file:
+$cfg['Servers'][$i]['AllowNoPassword'] = true;
+
+Add this line directly beneath it to change the port
+$cfg['Servers'][$i]['port'] = 3307;
+
+Back to the control panel, start Apache and MySQL servers. Click admin on MySQL to open phpmyadmin.
+Make a new database named "athensdb". 
+Import the sql file provided in the github (github.com/jep0622/CS452Xampp) to create the tables in the database.
+
+In xampp > htdocs make a new folder, name it whatever you want the site folder to be named, for example siteFolder.
+Download all files from the github and place them directly into the siteFolder.
+(The sql file and this instructional text file do absolutely nothing here but they don't hurt)
+
+Open any browser. Navigate to localhost/siteFolder (or whatever you named the folder)
